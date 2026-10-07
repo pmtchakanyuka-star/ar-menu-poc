@@ -1,2 +1,6 @@
 .venv/
 __pycache__/
+# The reference photo shows more than the cake (kitchen, other items): keep it local.
+tools/calib/reference.jpg
+tools/calib/*_overlay.png
+tools/calib/cake_basecolor_preview.png

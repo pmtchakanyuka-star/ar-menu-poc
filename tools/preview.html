@@ -20,6 +20,9 @@
     mv.fieldOfView = q.get('fov') || '30deg';
     mv.exposure = q.get('exposure') || '1.05';
     if (q.get('env')) mv.environmentImage = q.get('env');
+    // Local antivirus web shields sometimes reset big localhost downloads: retry.
+    let tries = 0;
+    mv.addEventListener('error', () => { if (tries++ < 6) mv.src = '../models/cake.glb?retry=' + Date.now(); });
   </script>
 </body>
 </html>
