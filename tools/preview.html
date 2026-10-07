@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- Dev-only: full-window render for comparing the model with the reference photo.
+     Query params: ?orbit=20deg 50deg 0.6m&fov=30deg&exposure=1 -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Cake preview (dev)</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; background: #8f8a84; }
+    model-viewer { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <model-viewer id="mv" src="../models/cake.glb" camera-controls shadow-intensity="1" shadow-softness="0.9"></model-viewer>
+  <script type="module">
+    const q = new URLSearchParams(location.search);
+    const mv = document.getElementById('mv');
+    mv.cameraOrbit = q.get('orbit') || '20deg 48deg 0.62m';
+    mv.fieldOfView = q.get('fov') || '30deg';
+    mv.exposure = q.get('exposure') || '1.05';
+    if (q.get('env')) mv.environmentImage = q.get('env');
+  </script>
+</body>
+</html>

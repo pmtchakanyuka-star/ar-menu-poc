@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chocolate Ring Cake · AR Menu</title>
+  <meta name="description" content="See the chocolate ring cake on your own table, at its real size, in augmented reality.">
+  <meta name="theme-color" content="#f6efe6">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6efe6;
+      --card: #fffaf4;
+      --ink: #2b1a12;
+      --muted: #7a6455;
+      --line: #e8dccd;
+      --accent: #6b3a1f;
+      --accent-ink: #fff7ee;
+      --stage-top: #fbf6ef;
+      --stage-bottom: #eadccb;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: max(16px, env(safe-area-inset-top)) 16px 40px;
+      display: grid;
+      gap: 20px;
+    }
+    @media (min-width: 900px) {
+      main { grid-template-columns: 1.25fr 1fr; align-items: start; padding-top: 40px; gap: 32px; }
+    }
+    .eyebrow {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: #c58b4a; }
+
+    /* 3D stage */
+    .stage {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      background: radial-gradient(120% 90% at 50% 20%, var(--stage-top), var(--stage-bottom));
+      box-shadow: 0 1px 0 #fff inset, 0 20px 40px -24px rgba(60, 30, 10, .35);
+    }
+    model-viewer {
+      display: block;
+      width: 100%;
+      height: min(64vh, 560px);
+      min-height: 340px;
+      --poster-color: transparent;
+      --progress-bar-color: var(--accent);
+      --progress-bar-height: 3px;
+    }
+    .badge {
+      position: absolute; left: 14px; top: 14px;
+      padding: 6px 10px; border-radius: 999px;
+      background: rgba(255, 250, 244, .85); backdrop-filter: blur(6px);
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      pointer-events: none;
+    }
+    .ar-button {
+      position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px; border: 0; border-radius: 999px;
+      background: var(--accent); color: var(--accent-ink);
+      font: 600 16px/1 Inter, system-ui, sans-serif;
+      box-shadow: 0 10px 24px -8px rgba(60, 25, 5, .55);
+      cursor: pointer; white-space: nowrap;
+    }
+    .ar-button svg { width: 20px; height: 20px; }
+    .ar-button:active { transform: translateX(-50%) scale(.97); }
+
+    /* Dish card */
+    .dish { display: grid; gap: 16px; }
+    h1 {
+      margin: 4px 0 0;
+      font: 650 clamp(30px, 6vw, 44px)/1.05 Fraunces, Georgia, serif;
+      letter-spacing: -.01em;
+    }
+    .desc { margin: 0; color: var(--muted); font-size: 17px; }
+    .facts {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line); border-radius: 16px; background: var(--card);
+    }
+    .facts div { padding: 12px 14px; }
+    .facts div + div { border-left: 1px solid var(--line); }
+    .facts b { display: block; font: 650 20px/1.2 Fraunces, Georgia, serif; }
+    .facts span { font-size: 12px; color: var(--muted); }
+    .how { border-radius: 16px; background: var(--card); border: 1px solid var(--line); padding: 16px 18px; }
+    .how h2 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }
+    .how ol { margin: 0; padding-left: 20px; color: var(--muted); display: grid; gap: 6px; }
+    .how li::marker { color: var(--accent); font-weight: 600; }
+    .qr {
+      display: none; gap: 16px; align-items: center;
+      border-radius: 16px; background: var(--card); border: 1px solid var(--line); padding: 16px;
+    }
+    .qr img { width: 132px; height: 132px; image-rendering: pixelated; flex: none; }
+    .qr p { margin: 0; color: var(--muted); font-size: 14px; }
+    .qr strong { display: block; color: var(--ink); font-size: 16px; margin-bottom: 4px; }
+    .no-ar .qr { display: flex; }
+    .note { min-height: 1.5em; margin: 0; font-size: 14px; color: #a1452a; }
+    footer { grid-column: 1 / -1; font-size: 12px; color: var(--muted); text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="stage" aria-label="3D view of the cake">
+      <model-viewer
+        id="cake"
+        src="models/cake.glb"
+        ios-src="models/cake.usdz"
+        alt="Chocolate ring cake covered in chocolate sprinkles, glaze pooled on a white plate"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="fixed"
+        ar-placement="floor"
+        camera-controls
+        touch-action="pan-y"
+        auto-rotate
+        auto-rotate-delay="1500"
+        rotation-per-second="14deg"
+        camera-orbit="15deg 45deg auto"
+        min-camera-orbit="auto 0deg auto"
+        max-camera-orbit="auto 88deg auto"
+        interaction-prompt="none"
+        shadow-intensity="1"
+        shadow-softness="0.9"
+        exposure="1.05">
+        <button slot="ar-button" class="ar-button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2.8 20 7.4v9.2L12 21.2 4 16.6V7.4z"/><path d="M4 7.4 12 12l8-4.6M12 12v9.2"/>
+          </svg>
+          View on your table
+        </button>
+      </model-viewer>
+      <span class="badge">Real size · 3D</span>
+    </section>
+
+    <section class="dish">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>AR menu · proof of concept</div>
+        <h1>Chocolate Ring Cake</h1>
+      </div>
+      <p class="desc">Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.</p>
+      <div class="facts">
+        <div><b>22 cm</b><span>across</span></div>
+        <div><b>9.4 cm</b><span>tall</span></div>
+        <div><b>30 cm</b><span>plate</span></div>
+      </div>
+      <div class="how">
+        <h2>See it on your table</h2>
+        <ol>
+          <li>Tap <b>View on your table</b>.</li>
+          <li>Point your phone at the table and move it slowly until the cake appears.</li>
+          <li>It's shown at its real size. Walk around it, or lean in for a closer look.</li>
+        </ol>
+      </div>
+      <div class="qr">
+        <img src="qr.svg" alt="QR code that opens this page">
+        <p><strong>Open on your phone</strong>Augmented reality needs a phone or tablet. Scan this code with the camera app.</p>
+      </div>
+      <p class="note" id="note" role="status"></p>
+    </section>
+
+    <footer>3D replica built procedurally from a single photo · rendered with &lt;model-viewer&gt;</footer>
+  </main>
+
+  <script type="module">
+    const viewer = document.getElementById('cake');
+    const note = document.getElementById('note');
+    viewer.addEventListener('load', () => {
+      if (!viewer.canActivateAR) document.body.classList.add('no-ar');
+    });
+    viewer.addEventListener('ar-status', (e) => {
+      if (e.detail.status === 'failed') {
+        note.textContent = "Couldn't start AR on this device. On Android, check that Google Play Services for AR is installed.";
+      }
+    });
+  </script>
+</body>
+</html>
