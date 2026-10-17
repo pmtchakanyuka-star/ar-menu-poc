@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Chocolate Ring Cake · AR Menu</title>
-  <meta name="description" content="See the chocolate ring cake on your own table, at its real size, in augmented reality.">
+  <title>AR Menu</title>
+  <meta name="description" content="See each dish on your own table, at its real size, in augmented reality.">
   <meta name="theme-color" content="#f6efe6">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,6 +83,20 @@
     .ar-button svg { width: 20px; height: 20px; }
     .ar-button:active { transform: translateX(-50%) scale(.97); }
 
+    /* Menu: one tab per dish */
+    .menu { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px 4px; }
+    .menu::-webkit-scrollbar { display: none; }
+    .menu a {
+      flex: none; display: flex; align-items: center; gap: 8px;
+      padding: 5px 14px 5px 5px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--card);
+      color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600;
+    }
+    .menu a img { width: 38px; height: 38px; border-radius: 50%; background: var(--stage-bottom); object-fit: cover; }
+    .menu a[aria-current="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+    .menu a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    @media (min-width: 900px) { .menu { margin: 0; padding-left: 0; padding-right: 0; flex-wrap: wrap; } }
+
     /* Dish card */
     .dish { display: grid; gap: 16px; }
     h1 {
@@ -117,9 +131,9 @@
 </head>
 <body>
   <main>
-    <section class="stage" aria-label="3D view of the cake">
+    <section class="stage" id="stage" aria-label="3D view of the dish">
       <model-viewer
-        id="cake"
+        id="viewer"
         src="models/cake.glb"
         ios-src="models/cake.usdz"
         alt="Chocolate ring cake covered in chocolate sprinkles, glaze pooled on a white plate"
@@ -150,12 +164,16 @@
     </section>
 
     <section class="dish">
+      <nav class="menu" aria-label="Menu">
+        <a href="#cake" data-dish="cake"><img src="models/cake-thumb.webp" alt="" width="38" height="38">Chocolate Ring Cake</a>
+        <a href="#tiramisu" data-dish="tiramisu"><img src="models/tiramisu-thumb.webp" alt="" width="38" height="38">Tiramisu</a>
+      </nav>
       <div>
         <div class="eyebrow"><span class="dot"></span>AR menu · proof of concept</div>
-        <h1>Chocolate Ring Cake</h1>
+        <h1 id="name">Chocolate Ring Cake</h1>
       </div>
-      <p class="desc">Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.</p>
-      <div class="facts">
+      <p class="desc" id="desc">Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.</p>
+      <div class="facts" id="facts">
         <div><b>26 cm</b><span>across</span></div>
         <div><b>11 cm</b><span>tall</span></div>
         <div><b>32 cm</b><span>plate</span></div>
@@ -164,7 +182,7 @@
         <h2>See it on your table</h2>
         <ol>
           <li>Tap <b>View on your table</b>.</li>
-          <li>Point your phone at the table and move it slowly until the cake appears.</li>
+          <li>Point your phone at the table and move it slowly until the dish appears.</li>
           <li>It's shown at its real size. Walk around it, or lean in for a closer look.</li>
         </ol>
       </div>
@@ -175,14 +193,61 @@
       <p class="note" id="note" role="status"></p>
     </section>
 
-    <footer>3D model made from one photo of the real cake · rendered with &lt;model-viewer&gt;</footer>
+    <footer><span id="credit">3D model made from one photo of the real cake</span> · rendered with &lt;model-viewer&gt;</footer>
   </main>
 
   <script type="module">
-    const viewer = document.getElementById('cake');
-    const note = document.getElementById('note');
+    const DISHES = {
+      cake: {
+        name: 'Chocolate Ring Cake',
+        desc: 'Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.',
+        alt: 'Chocolate ring cake covered in chocolate sprinkles, glaze pooled on a white plate',
+        facts: [['26 cm', 'across'], ['11 cm', 'tall'], ['32 cm', 'plate']],
+        orbit: '15deg 45deg auto',
+        credit: '3D model made from one photo of the real cake',
+      },
+      tiramisu: {
+        name: 'Tiramisu',
+        desc: 'Coffee-soaked ladyfingers under a thick layer of mascarpone cream, dusted with cocoa and finished with a sprig of fresh mint.',
+        alt: 'A square slice of tiramisu dusted with cocoa, topped with mint, on a black tray',
+        facts: [['11 × 9 cm', 'slice'], ['4 cm', 'tall'], ['16 cm', 'tray']],
+        orbit: '-25deg 55deg auto',
+        credit: '3D model made from photos of the real tiramisu',
+      },
+    };
+    const $ = (id) => document.getElementById(id);
+    const viewer = $('viewer');
+    const note = $('note');
+
+    function show(id) {
+      const d = DISHES[id] ? id : 'cake';
+      const dish = DISHES[d];
+      viewer.setAttribute('src', `models/${d}.glb`);
+      viewer.setAttribute('ios-src', `models/${d}.usdz`);
+      viewer.setAttribute('alt', dish.alt);
+      viewer.setAttribute('camera-orbit', dish.orbit);
+      viewer.jumpCameraToGoal?.();
+      $('stage').setAttribute('aria-label', `3D view of the ${dish.name.toLowerCase()}`);
+      $('name').textContent = dish.name;
+      $('desc').textContent = dish.desc;
+      $('facts').replaceChildren(...dish.facts.map(([value, label]) => {
+        const div = document.createElement('div');
+        div.append(Object.assign(document.createElement('b'), { textContent: value }),
+                   Object.assign(document.createElement('span'), { textContent: label }));
+        return div;
+      }));
+      $('credit').textContent = dish.credit;
+      document.title = `${dish.name} · AR Menu`;
+      note.textContent = '';
+      for (const a of document.querySelectorAll('.menu a')) {
+        a.setAttribute('aria-current', String(a.dataset.dish === d));
+      }
+    }
+    show(location.hash.slice(1));
+    addEventListener('hashchange', () => show(location.hash.slice(1)));
+
     viewer.addEventListener('load', () => {
-      if (!viewer.canActivateAR) document.body.classList.add('no-ar');
+      document.body.classList.toggle('no-ar', !viewer.canActivateAR);
     });
     viewer.addEventListener('ar-status', (e) => {
       if (e.detail.status === 'failed') {
