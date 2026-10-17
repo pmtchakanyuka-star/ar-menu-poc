@@ -1,8 +1,14 @@
 # AR Menu — proof of concept
 
-Scan the QR code with a phone and tap **View on your table**. A chocolate ring
-cake appears on your table at its real size: 26 cm across, 11 cm tall, on a
-32 cm plate. Walk around it and lean in.
+Scan the QR code with a phone, pick a dish and tap **View on your table**. The
+dish appears on your table at its real size. Walk around it and lean in.
+
+| Dish | Real size |
+| --- | --- |
+| Chocolate ring cake | 26 cm across, 11 cm tall, on a 32 cm plate |
+| Tiramisu | 11 × 9 cm slice, 4 cm tall, on a 16 cm tray |
+
+Each dish has its own link: `…/ar-menu-poc/#cake`, `…/ar-menu-poc/#tiramisu`.
 
 **Live:** https://pmtchakanyuka-star.github.io/ar-menu-poc/
 
@@ -12,12 +18,16 @@ cake appears on your table at its real size: 26 cm across, 11 cm tall, on a
 
 | Piece | What it is |
 | --- | --- |
-| `index.html` | The menu-item page. It uses Google's [`<model-viewer>`](https://modelviewer.dev) for the 3D preview and the AR hand-off. `ar-scale="fixed"` locks the cake to its real size. |
-| `models/cake.glb` | glTF 2.0 model for the web preview and Android: WebXR in Chrome, with Scene Viewer as the fallback. |
-| `models/cake.usdz` | USDZ model for iPhone and iPad (AR Quick Look). |
+| `index.html` | The menu page. One tab per dish (the `DISHES` list in the script). It uses Google's [`<model-viewer>`](https://modelviewer.dev) for the 3D preview and the AR hand-off. `ar-scale="fixed"` locks each dish to its real size. |
+| `models/*.glb` | glTF 2.0 models for the web preview and Android: WebXR in Chrome, with Scene Viewer as the fallback. |
+| `models/*.usdz` | USDZ models for iPhone and iPad (AR Quick Look). |
+| `models/*-thumb.webp` | Menu tab pictures: renders of the models. |
 | `tools/calib/detect_edges.py` | Finds the plate rim, the edge of the glaze pool and the cake's top outline in the reference photo. |
 | `tools/calib/fit_camera.py` | Fits a camera and the cake's profile to those edges, plus a few hand-measured points on the hole and base, then scales the result so the base is 26 cm. |
 | `tools/build_cake.py` | Builds the shape and projects the photo onto it as texture. Writes both model files. |
+| `tools/build_tiramisu.py` | Builds the tiramisu, its mint sprig and its tray, textured from the photos. Writes both model files. |
+| `tools/model_io.py` | The glTF and USDZ writers both builders share. |
+| `tools/preview.html` | Dev-only full-window render of one model (`?src=tiramisu`). |
 | `tools/make_qr.py` | Writes `qr.png` / `qr.svg`. |
 
 ### The model is made from one photo
@@ -35,6 +45,20 @@ cake appears on your table at its real size: 26 cm across, 11 cm tall, on a
 
 Both files are validated. The Khronos glTF Validator reports 0 errors and 0 warnings, and all 28 OpenUSD validators pass for the USDZ, including the usdz packaging rules.
 
+### The tiramisu is made from five photos
+
+1. **Shape.** A slice with a gently domed top, soft rounded edges and cream sides that bulge and slump a little, on a black thermoformed tray with ribbed walls and a rolled rim, plus a three-leaf mint sprig. There is no real-world measurement in the photos, so the tray is the yardstick: it is about ten times as wide as it is deep, and the slice spans about 70% of its width. The sizes are constants at the top of `tools/build_tiramisu.py`.
+2. **Texture.** The top is the cocoa from the straight-down photo. The sides are the slice's front face from two photos, warped flat by the four corners of the face and wrapped round, so every pixel is a real one. Where the top turns into the side, the cocoa gives way to the cream along a ragged line, as dusted cocoa does. The lighting is evened out first, and the bump and roughness maps come from the same pixels: matte cocoa, moist cream.
+3. **Export.** Like the cake: metres, Y-up, origin under the tray.
+
+| | |
+| --- | --- |
+| Slice | 11 × 9 cm, 4 cm tall (16 cm tray) |
+| Triangles | ~113k |
+| Files | `tiramisu.glb` 4.2 MB · `tiramisu.usdz` 3.1 MB |
+
+Both files pass the same checks as the cake's: 0 glTF Validator errors or warnings, and all 28 OpenUSD validators.
+
 ## Rebuild
 
 The reference photo isn't in the repo, because it shows more than the cake. Put it at
@@ -50,6 +74,17 @@ python -m venv .venv
 ```
 
 To use a different real size, change `CAKE_BASE_DIAMETER` in `tools/calib/fit_camera.py`.
+
+The tiramisu photos aren't in the repo either (people in the background). Put them in
+`tools/tiramisu/ref/` as `front.jpg` (from the front, a little above), `corner.jpg`
+(from the front left corner), `top.jpg` (straight down) and, for reference only,
+`low.jpg` and `corner2.jpg`. Then:
+
+```bash
+.venv/Scripts/python tools/build_tiramisu.py
+```
+
+The photo crops it uses (the corners of each face, the top's crop) are listed at the top of the script.
 
 ## From PoC to a real AR menu
 

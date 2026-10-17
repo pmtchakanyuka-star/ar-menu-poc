@@ -4,3 +4,6 @@ __pycache__/
 tools/calib/reference.jpg
 tools/calib/*_overlay.png
 tools/calib/cake_basecolor_preview.png
+# Same for the tiramisu photos (people in the background).
+tools/tiramisu/ref/
+tools/tiramisu/tiramisu_basecolor_preview.png
