@@ -90,11 +90,32 @@
       .lang button { padding: 6px 9px; }
     }
 
-    /* ---------- Hero line ---------- */
-    .intro { max-width: 1180px; margin: 0 auto; padding: 26px 16px 8px; }
-    .intro h1 { margin: 0; font: 600 clamp(32px, 6.4vw, 64px)/1.02 Fraunces, "Noto Serif JP", Georgia, serif; letter-spacing: -.02em; max-width: 14ch; }
+    /* ---------- Hero line, over a looping clip of the café ---------- */
+    .intro { max-width: 1180px; margin: 0 auto; padding: 18px 16px 4px; }
+    .hero { position: relative; isolation: isolate; overflow: hidden; border-radius: 28px; border: 1px solid var(--line);
+      min-height: clamp(250px, 34vw, 380px); padding: clamp(22px, 4vw, 44px); display: flex; flex-direction: column; justify-content: flex-end;
+      background: var(--deep) url("media/hero-poster.webp") center 60% / cover no-repeat;
+      box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .7); }
+    .hero video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 60%;
+      opacity: 0; transition: opacity 1.2s var(--ease); }
+    .hero video.playing { opacity: 1; }
+    .hero::before { /* keeps the headline readable over any frame */
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(90deg, rgba(6, 26, 46, .92) 0%, rgba(6, 26, 46, .72) 42%, rgba(6, 26, 46, .12) 78%),
+                  linear-gradient(0deg, rgba(6, 26, 46, .7), transparent 55%); }
+    @media (max-width: 640px) {
+      .hero { min-height: 210px; padding: 52px 18px 18px; border-radius: 24px; }   /* top room for the pause button */
+      .hero::before { background: linear-gradient(0deg, rgba(6, 26, 46, .95) 8%, rgba(6, 26, 46, .62) 58%, rgba(6, 26, 46, .18)); }
+      .intro p { font-size: 15px; margin-top: 8px; }
+    }
+    .intro h1 { margin: 0; font: 600 clamp(32px, 6.4vw, 64px)/1.02 Fraunces, "Noto Serif JP", Georgia, serif; letter-spacing: -.02em; max-width: 14ch;
+      text-shadow: 0 2px 18px rgba(6, 26, 46, .6); }
     .intro h1 em { font-style: italic; color: var(--sky); }
-    .intro p { margin: 12px 0 0; max-width: 52ch; color: var(--muted); font-size: 17px; }
+    .intro p { margin: 12px 0 0; max-width: 46ch; color: #c4dfee; font-size: 17px; text-shadow: 0 1px 10px rgba(6, 26, 46, .7); }
+    .motion-btn { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border-radius: 50%; display: none; place-items: center;
+      cursor: pointer; border: 1px solid var(--line); background: rgba(6, 26, 46, .55); backdrop-filter: blur(10px); }
+    .motion-btn svg { width: 16px; height: 16px; }
+    .hero.has-video .motion-btn { display: grid; }
     .reveal { opacity: 0; transform: translateY(14px); animation: rise .9s var(--ease) forwards; }
     .d1 { animation-delay: .08s; } .d2 { animation-delay: .18s; } .d3 { animation-delay: .3s; } .d4 { animation-delay: .42s; }
     @keyframes rise { to { opacity: 1; transform: none; } }
@@ -114,6 +135,9 @@
     model-viewer { display: block; width: 100%; height: min(66vh, 600px); min-height: 360px;
       --poster-color: transparent; --progress-bar-height: 0px; transition: opacity .45s var(--ease), transform .6s var(--ease); }
     model-viewer.swapping { opacity: 0; transform: scale(.96) translateY(8px); }
+    @media (max-width: 640px) {   /* phones: the stage ends on the first screen, so "View on your table" is in sight */
+      model-viewer { height: max(340px, calc(100svh - 430px)); }
+    }
     .chip { position: absolute; top: 14px; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px;
       border-radius: 999px; background: rgba(6, 26, 46, .55); backdrop-filter: blur(10px); border: 1px solid var(--line);
       font-size: 12px; font-weight: 600; letter-spacing: .02em; }
@@ -260,8 +284,15 @@
   </header>
 
   <section class="intro">
-    <h1 class="reveal d1" data-i18n-html="hero">See it on your table <em>before you order.</em></h1>
-    <p class="reveal d2" data-i18n="lede">Pick a dish, then place it in front of you in augmented reality: real size, every crumb, from any angle.</p>
+    <div class="hero reveal d1" id="hero">
+      <!-- sources are added by the script once the first 3D model has loaded (never for reduced motion / data saver) -->
+      <video id="heroVideo" muted playsinline loop preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1"></video>
+      <button class="motion-btn" id="motionBtn" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path id="motionIcon" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+      </button>
+      <h1 data-i18n-html="hero">See it on your table <em>before you order.</em></h1>
+      <p data-i18n="lede">Pick a dish, then place it in front of you in augmented reality: real size, every crumb, from any angle.</p>
+    </div>
   </section>
 
   <main>
@@ -399,6 +430,7 @@
         lede: 'Pick a dish, then place it in front of you in augmented reality: real size, every crumb, from any angle.',
         viewAR: 'View on your table', realSize: 'Real size · 3D', drag: 'Drag to turn it round', loading: 'Loading 3D model',
         prev: 'Previous dish', next: 'Next dish', reset: 'Reset the view', menu: 'Menu',
+        pauseMotion: 'Pause the background video', playMotion: 'Play the background video',
         tag_cake: 'Cake · to share', tag_tiramisu: 'Dessert · slice', tag_gnocchi: 'Main · bowl',
         howTitle: 'See it on your table', step1: 'Tap <b>View on your table</b>.',
         step2: 'Point your phone at the table and move it slowly until the dish appears.',
@@ -422,6 +454,7 @@
         lede: 'メニューを選んで、AR（拡張現実）でテーブルに置いてみてください。実物大で、どの角度からでも細部までご覧いただけます。',
         viewAR: 'テーブルに置いてみる', realSize: '実物大・3D', drag: 'ドラッグで回転', loading: '3Dモデルを読み込み中',
         prev: '前の料理', next: '次の料理', reset: '表示をリセット', menu: 'メニュー',
+        pauseMotion: '背景の動画を一時停止', playMotion: '背景の動画を再生',
         tag_cake: 'ケーキ・シェア向け', tag_tiramisu: 'デザート・カット', tag_gnocchi: 'メイン・ボウル',
         howTitle: 'テーブルで見る方法', step1: '<b>テーブルに置いてみる</b>をタップします。',
         step2: 'スマートフォンをテーブルに向け、料理が表示されるまでゆっくり動かします。',
@@ -457,24 +490,23 @@
         orbit: '-25deg 55deg 0.5m', rotate: true,
         en: { name: 'Tiramisu', course: 'Dessert',
           desc: 'Coffee-soaked ladyfingers under a thick layer of mascarpone cream, dusted with cocoa and finished with a sprig of fresh mint.',
-          alt: 'A square slice of tiramisu dusted with cocoa, topped with mint, on a black tray',
-          facts: [['11 × 9 cm', 'slice'], ['4 cm', 'tall'], ['16 cm', 'tray']], credit: '3D model made from photos of the real tiramisu' },
+          alt: 'A layered slice of tiramisu dusted with cocoa, topped with mint, in a black ribbed tray',
+          facts: [['16 cm', 'tray'], ['7 cm', 'tall'], ['1', 'slice']], credit: 'AI-generated 3D model' },
         ja: { name: 'ティラミス', course: 'デザート',
           desc: 'コーヒーを染み込ませたフィンガービスケットに濃厚なマスカルポーネクリームを重ね、ココアとフレッシュミントで仕上げました。',
-          alt: 'ココアをまぶし、ミントを添えた四角いティラミス。黒いトレーにのっている',
-          facts: [['11 × 9 cm', 'サイズ'], ['4 cm', '高さ'], ['16 cm', 'トレー']], credit: '実物のティラミスの写真から作成した3Dモデル' },
+          alt: 'ココアをまぶし、ミントを添えた層の見えるティラミス。黒い波型のトレーに入っている',
+          facts: [['16 cm', 'トレー'], ['7 cm', '高さ'], ['1', 'カット']], credit: 'AIで生成した3Dモデル' },
       },
       gnocchi: {
-        // the photo saw this dish from the front: keep the turntable to that side
-        orbit: '0deg 52deg 0.62m', rotate: false, minOrbit: '-80deg 0deg auto', maxOrbit: '80deg 88deg auto',
+        orbit: '0deg 52deg 0.62m', rotate: true,
         en: { name: 'Pumpkin Gnocchi', course: 'Main',
           desc: 'Soft pumpkin gnocchi in a creamy cheese sauce, with toasted walnuts, cracked black pepper and a sprig of thyme.',
           alt: 'Orange pumpkin gnocchi in a pale cheese sauce with walnuts and thyme, in a white bowl with a blue painted pattern',
-          facts: [['23 cm', 'bowl'], ['5 cm', 'tall'], ['1', 'serving']], credit: '3D model textured with an overhead photo of the real dish' },
+          facts: [['23 cm', 'bowl'], ['7 cm', 'tall'], ['1', 'serving']], credit: 'AI-generated 3D model, made from photos of the real dish' },
         ja: { name: 'かぼちゃのニョッキ', course: 'メイン',
           desc: 'もちもちのかぼちゃのニョッキを、クリーミーなチーズソースで。ローストしたくるみ、粗挽き黒こしょう、タイムを添えて。',
           alt: '青い絵柄の白いボウルに盛られた、チーズソースのかぼちゃのニョッキ。くるみとタイムをのせている',
-          facts: [['23 cm', 'ボウル'], ['5 cm', '高さ'], ['1', '人前']], credit: '実物の料理を真上から撮った写真でテクスチャを付けた3Dモデル' },
+          facts: [['23 cm', 'ボウル'], ['7 cm', '高さ'], ['1', '人前']], credit: '実物の料理の写真からAIで生成した3Dモデル' },
       },
     };
     let lang = 'ja';
@@ -546,7 +578,49 @@
       for (const el of document.querySelectorAll('[data-dish-name]')) el.textContent = txt(el.dataset.dishName).name;
       for (const b of document.querySelectorAll('.lang button')) b.setAttribute('aria-pressed', String(b.dataset.lang === l));
       if (current) { setText(current); labels(current); viewer.setAttribute('alt', txt(current).alt); }
+      motionLabel();
     }
+    // hero clip: only once the first dish is on screen, so it never competes with the 3D model;
+    // never for reduced motion or data saver (the poster stays). The button pauses it (WCAG 2.2.2).
+    const heroVideo = $('heroVideo');
+    const calm = matchMedia('(prefers-reduced-motion: reduce)');
+    const saveData = navigator.connection?.saveData;
+    let heroPaused = false;
+    function motionLabel() {
+      $('motionBtn').setAttribute('aria-label', t(heroPaused ? 'playMotion' : 'pauseMotion'));
+      $('motionBtn').setAttribute('aria-pressed', String(heroPaused));
+      $('motionIcon').setAttribute('d', heroPaused ? 'M8 5v14l11-7z' : 'M7 5h3.5v14H7zM13.5 5H17v14h-3.5z');
+    }
+    function startHero() {
+      if (calm.matches || saveData || heroVideo.childElementCount) return;
+      for (const [src, type] of [['media/hero.webm', 'video/webm'], ['media/hero.mp4', 'video/mp4']])
+        heroVideo.append(Object.assign(document.createElement('source'), { src, type }));
+      heroVideo.addEventListener('playing', () => heroVideo.classList.add('playing'), { once: true });
+      heroVideo.load();
+      heroVideo.play().then(() => $('hero').classList.add('has-video')).catch(() => {});
+    }
+    $('motionBtn').onclick = () => {
+      heroPaused = !heroPaused;
+      heroPaused ? heroVideo.pause() : heroVideo.play().catch(() => {});
+      motionLabel();
+    };
+    calm.addEventListener('change', () => { if (calm.matches) { heroVideo.pause(); heroVideo.classList.remove('playing'); } });
+
+    // after the first dish: fetch the next one in the background so the → tap is instant
+    // (one dish only, and not on slow or metered connections: each is several MB)
+    function prefetchNext() {
+      if (saveData || /(^|-)[23]g$/.test(navigator.connection?.effectiveType || '')) return;
+      const next = ORDER[(ORDER.indexOf(current) + 1) % ORDER.length];
+      document.head.append(Object.assign(document.createElement('link'), { rel: 'prefetch', href: `models/${next}.glb` }));
+    }
+    let firstLoad = true;
+    viewer.addEventListener('load', () => {
+      if (!firstLoad) return;
+      firstLoad = false;
+      const later = window.requestIdleCallback || ((f) => setTimeout(f, 400));
+      later(() => { startHero(); prefetchNext(); });
+    });
+
     for (const b of document.querySelectorAll('.lang button')) b.onclick = () => applyLang(b.dataset.lang);
     applyLang(lang);
     show(location.hash.slice(1), { first: true });
