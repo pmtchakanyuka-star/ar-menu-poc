@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Picador Coffee · AR Menu</title>
-  <meta name="description" content="Picador Coffee's menu in augmented reality: see each dish on your own table, at its real size, before you order.">
+  <title>Piccolo Coffee · AR Menu</title>
+  <meta name="description" content="Piccolo Coffee's menu in augmented reality: see each dish on your own table, at its real size, before you order.">
   <meta name="theme-color" content="#082640">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
   <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
   <style>
     :root {
@@ -33,7 +33,7 @@
       min-height: 100vh;
       background: var(--night);
       color: var(--ink);
-      font: 400 16px/1.55 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      font: 400 16px/1.6 Inter, "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
@@ -65,19 +65,34 @@
     header { max-width: 1180px; margin: 0 auto; padding: max(14px, env(safe-area-inset-top)) 16px 0;
       display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .mark { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
-      background: linear-gradient(145deg, var(--sky), var(--sea)); box-shadow: 0 8px 20px -8px #1aa0d8; }
-    .mark svg { width: 22px; height: 22px; }
-    .brand b { display: block; font: 700 19px/1 Fraunces, Georgia, serif; letter-spacing: .01em; }
+    .mark { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; box-shadow: 0 8px 22px -8px rgba(26,160,216,.7), 0 0 0 2px rgba(223,243,251,.25); }
+    .mark svg { width: 100%; height: 100%; }
+    .brand b { display: block; font: 700 19px/1 Fraunces, "Noto Serif JP", Georgia, serif; letter-spacing: .01em; }
     .brand small { display: block; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
     .help-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px;
       border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(10px); cursor: pointer;
       font-size: 14px; font-weight: 600; }
     .help-btn kbd { font: 600 11px Inter; padding: 1px 6px; border-radius: 6px; border: 1px solid var(--line); color: var(--muted); }
 
+    .tools { display: flex; align-items: center; gap: 8px; }
+    .lang { display: inline-flex; padding: 3px; border-radius: 999px; border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(10px); }
+    .lang button { border: 0; background: none; cursor: pointer; padding: 6px 11px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--muted); transition: background .25s, color .25s; }
+    .lang button[aria-pressed="true"] { background: var(--foam); color: var(--deep); }
+    :lang(ja) .intro h1 { letter-spacing: 0; line-height: 1.25; font-size: clamp(28px, 5.4vw, 54px); max-width: 18em; }
+    :lang(ja) .intro h1 em { font-style: normal; }
+    :lang(ja) .dish-head h2 { letter-spacing: 0; line-height: 1.25; }
+    :lang(ja) .crumbs, :lang(ja) .card h3, :lang(ja) .brand small { letter-spacing: .04em; }
+    .lang button, .help-btn, .brand b { white-space: nowrap; }
+    @media (max-width: 480px) {
+      .help-btn kbd, .help-btn [data-i18n] { display: none; }
+      .help-btn { padding: 9px; }
+      .brand { gap: 9px; } .mark { width: 36px; height: 36px; }
+      .lang button { padding: 6px 9px; }
+    }
+
     /* ---------- Hero line ---------- */
     .intro { max-width: 1180px; margin: 0 auto; padding: 26px 16px 8px; }
-    .intro h1 { margin: 0; font: 600 clamp(32px, 6.4vw, 64px)/1.02 Fraunces, Georgia, serif; letter-spacing: -.02em; max-width: 14ch; }
+    .intro h1 { margin: 0; font: 600 clamp(32px, 6.4vw, 64px)/1.02 Fraunces, "Noto Serif JP", Georgia, serif; letter-spacing: -.02em; max-width: 14ch; }
     .intro h1 em { font-style: italic; color: var(--sky); }
     .intro p { margin: 12px 0 0; max-width: 52ch; color: var(--muted); font-size: 17px; }
     .reveal { opacity: 0; transform: translateY(14px); animation: rise .9s var(--ease) forwards; }
@@ -156,14 +171,14 @@
     .card { border-radius: var(--radius); border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(14px); padding: 20px; }
     .crumbs { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
     .crumbs i { width: 4px; height: 4px; border-radius: 50%; background: var(--muted); }
-    .dish-head h2 { margin: 8px 0 0; font: 600 clamp(30px, 5vw, 44px)/1.05 Fraunces, Georgia, serif; letter-spacing: -.01em; }
+    .dish-head h2 { margin: 8px 0 0; font: 600 clamp(30px, 5vw, 44px)/1.05 Fraunces, "Noto Serif JP", Georgia, serif; letter-spacing: -.01em; }
     .dish-head p { margin: 10px 0 0; color: var(--muted); font-size: 16.5px; }
     .swap-text { transition: opacity .3s, transform .4s var(--ease); }
     .swap-text.out { opacity: 0; transform: translateY(6px); }
     .facts { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 16px; border-radius: 16px; border: 1px solid var(--line); overflow: hidden; }
     .facts div { padding: 12px 14px; background: rgba(6,26,46,.35); }
     .facts div + div { border-left: 1px solid var(--line); }
-    .facts b { display: block; font: 600 21px/1.2 Fraunces, Georgia, serif; color: var(--foam); }
+    .facts b { display: block; font: 600 21px/1.2 Fraunces, "Noto Serif JP", Georgia, serif; color: var(--foam); }
     .facts span { font-size: 12px; color: var(--muted); }
     .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
     .steps li { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; color: var(--muted); }
@@ -191,7 +206,7 @@
     dialog::backdrop { background: rgba(3, 14, 26, .6); backdrop-filter: blur(4px); }
     dialog[open] { animation: rise .45s var(--ease); }
     .sheet { padding: 24px; display: grid; gap: 16px; }
-    .sheet h2 { margin: 0; font: 600 26px/1.1 Fraunces, Georgia, serif; }
+    .sheet h2 { margin: 0; font: 600 26px/1.1 Fraunces, "Noto Serif JP", Georgia, serif; }
     .sheet dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; font-size: 14.5px; }
     .sheet dt { font-weight: 700; color: var(--foam); }
     .sheet dd { margin: 0; color: var(--muted); }
@@ -212,23 +227,36 @@
   <div class="ambient" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
 
   <header class="reveal">
-    <a class="brand" href="#cake" aria-label="Picador Coffee AR menu, home">
+    <a class="brand" href="#cake" aria-label="Piccolo Coffee AR menu">
       <span class="mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 10h13v3a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3c-1 1.2 1 2 0 3.2M12 3c-1 1.2 1 2 0 3.2"/>
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="24" fill="#4c6b70"/>
+          <g fill="#6e1c1c">
+            <path d="M22.5 34c-1-5-4-7-8-9.5-3-1.8-4-5-2-6.6 2.3-1.8 5 .8 6 3.4.6-4-2.4-6.8-.6-9 1.8-2.2 5-.5 5 3 .3-3.3 1.8-6 4.4-5.8 2.8.3 3 3.6 1 6.2 2.2-2.3 5.6-2.4 6.4-.2.9 2.4-1.6 4-4.4 4.6 3-.3 5.2 1.3 4.6 3.4-.7 2.4-4 2.2-6.6.5-2 2.6-3.2 5.2-3.4 10z"/>
+            <circle cx="10.5" cy="14" r="1.6"/><circle cx="37.5" cy="12" r="1.4"/><circle cx="39" cy="21" r="1.1"/>
+            <circle cx="8.5" cy="23" r="1.1"/><circle cx="15" cy="9" r="1"/><circle cx="31" cy="7.5" r="1.1"/>
+          </g>
+          <path d="M15.5 32.5h17l-1.5 6.5a3 3 0 0 1-3 2.3h-8a3 3 0 0 1-3-2.3z" fill="#ecdcbd"/>
+          <path d="M32.2 34.2h1.3a2.3 2.3 0 0 1 0 4.6h-2" fill="none" stroke="#ecdcbd" stroke-width="1.6"/>
         </svg>
       </span>
-      <span><b>Picador Coffee</b><small>AR Menu</small></span>
+      <span><b>Piccolo Coffee</b><small data-i18n="arMenu">AR Menu</small></span>
     </a>
-    <button class="help-btn" id="helpBtn" type="button" aria-haspopup="dialog">
+    <div class="tools">
+    <div class="lang" role="group" aria-label="Language / 言語">
+      <button type="button" data-lang="ja" lang="ja">日本語</button>
+      <button type="button" data-lang="en" lang="en">EN</button>
+    </div>
+    <button class="help-btn" id="helpBtn" type="button" aria-haspopup="dialog" data-i18n-aria="help">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg>
-      Help <kbd>?</kbd>
+      <span data-i18n="help">Help</span> <kbd>?</kbd>
     </button>
+    </div>
   </header>
 
   <section class="intro">
-    <h1 class="reveal d1">See it on your table <em>before you order.</em></h1>
-    <p class="reveal d2">Pick a dish, then place it in front of you in augmented reality: real size, every crumb, from any angle.</p>
+    <h1 class="reveal d1" data-i18n-html="hero">See it on your table <em>before you order.</em></h1>
+    <p class="reveal d2" data-i18n="lede">Pick a dish, then place it in front of you in augmented reality: real size, every crumb, from any angle.</p>
   </section>
 
   <main>
@@ -259,46 +287,46 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 2.8 20 7.4v9.2L12 21.2 4 16.6V7.4z"/><path d="M4 7.4 12 12l8-4.6M12 12v9.2"/>
             </svg>
-            View on your table
+            <span data-i18n="viewAR">View on your table</span>
           </button>
         </model-viewer>
 
-        <span class="chip left"><span class="pulse" aria-hidden="true"></span>Real size · 3D</span>
+        <span class="chip left"><span class="pulse" aria-hidden="true"></span><span data-i18n="realSize">Real size · 3D</span></span>
         <span class="chip right" id="counter" aria-hidden="true">1 / 3</span>
 
-        <div class="loader" id="loader" role="progressbar" aria-label="Loading 3D model" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="loader" id="loader" role="progressbar" aria-label="Loading 3D model" data-i18n-aria="loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
           <div class="ring" id="ring"></div><span id="pct">0%</span>
         </div>
         <div class="hint" id="hint" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 11V6a1.5 1.5 0 0 1 3 0v5m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.5a6 6 0 0 1-4.6-2.2L4.5 15.6a1.5 1.5 0 0 1 2.2-2L9 15.5"/></svg>
-          Drag to turn it round
+          <span data-i18n="drag">Drag to turn it round</span>
         </div>
 
         <div class="controls">
-          <button class="icon-btn" id="prevBtn" type="button" aria-label="Previous dish">
+          <button class="icon-btn" id="prevBtn" type="button" aria-label="Previous dish" data-i18n-aria="prev">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 5-7 7 7 7"/></svg>
           </button>
           <span class="end">
-          <button class="icon-btn" id="resetBtn" type="button" aria-label="Reset the view">
+          <button class="icon-btn" id="resetBtn" type="button" aria-label="Reset the view" data-i18n-aria="reset">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.6"/><path d="M4 4v4.6h4.6"/></svg>
           </button>
-          <button class="icon-btn" id="nextBtn" type="button" aria-label="Next dish">
+          <button class="icon-btn" id="nextBtn" type="button" aria-label="Next dish" data-i18n-aria="next">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg>
           </button>
           </span>
         </div>
       </section>
 
-      <nav class="rail" id="rail" aria-label="Menu">
-        <a class="dish-card" href="#cake" data-dish="cake"><img src="models/cake-thumb.webp" alt="" width="64" height="64"><b>Chocolate Ring Cake</b><small>Cake · to share</small></a>
-        <a class="dish-card" href="#tiramisu" data-dish="tiramisu"><img src="models/tiramisu-thumb.webp" alt="" width="64" height="64"><b>Tiramisu</b><small>Dessert · slice</small></a>
-        <a class="dish-card" href="#gnocchi" data-dish="gnocchi"><img src="models/gnocchi-thumb.webp" alt="" width="64" height="64"><b>Pumpkin Gnocchi</b><small>Main · bowl</small></a>
+      <nav class="rail" id="rail" aria-label="Menu" data-i18n-aria="menu">
+        <a class="dish-card" href="#cake" data-dish="cake"><img src="models/cake-thumb.webp" alt="" width="64" height="64"><b data-dish-name="cake"></b><small data-i18n="tag_cake"></small></a>
+        <a class="dish-card" href="#tiramisu" data-dish="tiramisu"><img src="models/tiramisu-thumb.webp" alt="" width="64" height="64"><b data-dish-name="tiramisu"></b><small data-i18n="tag_tiramisu"></small></a>
+        <a class="dish-card" href="#gnocchi" data-dish="gnocchi"><img src="models/gnocchi-thumb.webp" alt="" width="64" height="64"><b data-dish-name="gnocchi"></b><small data-i18n="tag_gnocchi"></small></a>
       </nav>
     </div>
 
     <aside class="panel reveal d4">
       <div class="card dish-head">
-        <div class="crumbs"><span>Menu</span><i></i><span id="course">Cake</span></div>
+        <div class="crumbs"><span data-i18n="menu">Menu</span><i></i><span id="course">Cake</span></div>
         <div class="swap-text" id="text">
           <h2 id="name">Chocolate Ring Cake</h2>
           <p id="desc">Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.</p>
@@ -306,78 +334,139 @@
         </div>
       </div>
       <div class="card">
-        <h3>See it on your table</h3>
+        <h3 data-i18n="howTitle">See it on your table</h3>
         <ol class="steps">
-          <li><span class="n">1</span><span>Tap <b>View on your table</b>.</span></li>
-          <li><span class="n">2</span><span>Point your phone at the table and move it slowly until the dish appears.</span></li>
-          <li><span class="n">3</span><span>It's shown at its <b>real size</b>. Walk round it, or lean in for a closer look.</span></li>
+          <li><span class="n">1</span><span data-i18n-html="step1">Tap <b>View on your table</b>.</span></li>
+          <li><span class="n">2</span><span data-i18n="step2">Point your phone at the table and move it slowly until the dish appears.</span></li>
+          <li><span class="n">3</span><span data-i18n-html="step3">It's shown at its <b>real size</b>. Walk round it, or lean in for a closer look.</span></li>
         </ol>
       </div>
       <div class="card qr">
-        <img src="qr.svg" alt="QR code that opens this menu">
-        <p><strong>Open on your phone</strong>Augmented reality needs a phone or tablet. Scan this code with your camera app.</p>
+        <img src="qr.svg" alt="QR code that opens this menu" data-i18n-alt="qrAlt">
+        <p><strong data-i18n="qrTitle">Open on your phone</strong><span data-i18n="qrText">Augmented reality needs a phone or tablet. Scan this code with your camera app.</span></p>
       </div>
     </aside>
   </main>
 
   <footer>
+    <span data-i18n="visit"></span>
     <span id="credit">3D model made from one photo of the real cake</span>
-    <span>Use <b>←</b> <b>→</b> to switch dishes · <b>R</b> to reset the view</span>
+    <span data-i18n-html="keysFoot">Use <b>←</b> <b>→</b> to switch dishes · <b>R</b> to reset the view</span>
   </footer>
 
   <div class="toast" id="toast" role="alert" aria-live="assertive">
-    <p id="toastMsg"></p><button type="button" id="toastClose">Dismiss</button>
+    <p id="toastMsg"></p><button type="button" id="toastClose" data-i18n="dismiss">Dismiss</button>
   </div>
   <p class="sr" id="live" aria-live="polite"></p>
 
   <dialog id="help" aria-labelledby="helpTitle">
     <div class="sheet">
-      <h2 id="helpTitle">How this menu works</h2>
+      <h2 id="helpTitle" data-i18n="helpTitle">How this menu works</h2>
       <dl>
-        <dt>Choose</dt><dd>Tap a dish below the 3D view, or use the arrows. Each dish has its own link you can share.</dd>
-        <dt>Look</dt><dd>Drag to turn it, pinch or scroll to zoom. Lost your view? Tap the reset button or press <kbd>R</kbd>.</dd>
-        <dt>Place</dt><dd>Tap <b>View on your table</b> on a phone. The dish appears at exactly its real size.</dd>
-        <dt>Keys</dt><dd><kbd>←</kbd> <kbd>→</kbd> switch dishes · <kbd>R</kbd> reset view · <kbd>?</kbd> this help · <kbd>Esc</kbd> close</dd>
+        <dt data-i18n="hChoose"></dt><dd data-i18n="hChooseD"></dd>
+        <dt data-i18n="hLook"></dt><dd data-i18n-html="hLookD"></dd>
+        <dt data-i18n="hPlace"></dt><dd data-i18n-html="hPlaceD"></dd>
+        <dt data-i18n="hKeys"></dt><dd data-i18n-html="hKeysD"></dd>
       </dl>
-      <button class="close" type="button" id="helpClose">Got it</button>
+      <button class="close" type="button" id="helpClose" data-i18n="gotIt">Got it</button>
     </div>
   </dialog>
 
   <script type="module">
-    const DISHES = {
-      cake: {
-        name: 'Chocolate Ring Cake', course: 'Cake',
-        desc: 'Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.',
-        alt: 'Chocolate ring cake covered in chocolate sprinkles, glaze pooled on a white plate',
-        facts: [['26 cm', 'across'], ['11 cm', 'tall'], ['32 cm', 'plate']],
-        orbit: '15deg 45deg 0.95m', rotate: true,
-        credit: '3D model made from one photo of the real cake',
+    const STR = {
+      en: {
+        arMenu: 'AR Menu', help: 'Help', hero: 'See it on your table <em>before you order.</em>',
+        lede: 'Pick a dish, then place it in front of you in augmented reality: real size, every crumb, from any angle.',
+        viewAR: 'View on your table', realSize: 'Real size · 3D', drag: 'Drag to turn it round', loading: 'Loading 3D model',
+        prev: 'Previous dish', next: 'Next dish', reset: 'Reset the view', menu: 'Menu',
+        tag_cake: 'Cake · to share', tag_tiramisu: 'Dessert · slice', tag_gnocchi: 'Main · bowl',
+        howTitle: 'See it on your table', step1: 'Tap <b>View on your table</b>.',
+        step2: 'Point your phone at the table and move it slowly until the dish appears.',
+        step3: "It's shown at its <b>real size</b>. Walk round it, or lean in for a closer look.",
+        qrAlt: 'QR code that opens this menu', qrTitle: 'Open on your phone',
+        qrText: 'Augmented reality needs a phone or tablet. Scan this code with your camera app.',
+        keysFoot: 'Use <b>←</b> <b>→</b> to switch dishes · <b>R</b> to reset the view', dismiss: 'Dismiss',
+        helpTitle: 'How this menu works', hChoose: 'Choose', hChooseD: 'Tap a dish below the 3D view, or use the arrows. Each dish has its own link you can share.',
+        hLook: 'Look', hLookD: 'Drag to turn it, pinch or scroll to zoom. Lost your view? Tap the reset button or press <kbd>R</kbd>.',
+        hPlace: 'Place', hPlaceD: 'Tap <b>View on your table</b> on a phone. The dish appears at exactly its real size.',
+        hKeys: 'Keys', hKeysD: '<kbd>←</kbd> <kbd>→</kbd> switch dishes · <kbd>R</kbd> reset view · <kbd>?</kbd> this help · <kbd>Esc</kbd> close',
+        visit: 'Piccolo Coffee · coffee stand · 2-7-20 Shintencho, Ube, Yamaguchi · Open 6:00–14:00',
+        gotIt: 'Got it', showing: (n) => `Showing ${n}`, stage: (n) => `3D view of the ${n.toLowerCase()}`,
+        title: (n) => `${n} · Piccolo Coffee AR Menu`,
+        loadErr: "This dish didn't load. Check your connection, then tap the dish again.",
+        arErr: "Couldn't start AR on this phone. On Android, check that Google Play Services for AR is installed, then try again.",
       },
-      tiramisu: {
-        name: 'Tiramisu', course: 'Dessert',
-        desc: 'Coffee-soaked ladyfingers under a thick layer of mascarpone cream, dusted with cocoa and finished with a sprig of fresh mint.',
-        alt: 'A square slice of tiramisu dusted with cocoa, topped with mint, on a black tray',
-        facts: [['11 × 9 cm', 'slice'], ['4 cm', 'tall'], ['16 cm', 'tray']],
-        orbit: '-25deg 55deg 0.5m', rotate: true,
-        credit: '3D model made from photos of the real tiramisu',
-      },
-      gnocchi: {
-        name: 'Pumpkin Gnocchi', course: 'Main',
-        desc: 'Soft pumpkin gnocchi in a creamy cheese sauce, with toasted walnuts, cracked black pepper and a sprig of thyme.',
-        alt: 'Orange pumpkin gnocchi in a pale cheese sauce with walnuts and thyme, in a white bowl with a blue painted pattern',
-        facts: [['23 cm', 'bowl'], ['5 cm', 'tall'], ['1', 'serving']],
-        // the photo saw this dish from the front: keep the turntable to that side
-        orbit: '0deg 52deg 0.62m', rotate: false, minOrbit: '-80deg 0deg auto', maxOrbit: '80deg 88deg auto',
-        credit: '3D model textured with an overhead photo of the real dish',
+      ja: {
+        arMenu: 'ARメニュー', help: 'ヘルプ', hero: 'ご注文の前に、<em>テーブルで実物大を。</em>',
+        lede: 'メニューを選んで、AR（拡張現実）でテーブルに置いてみてください。実物大で、どの角度からでも細部までご覧いただけます。',
+        viewAR: 'テーブルに置いてみる', realSize: '実物大・3D', drag: 'ドラッグで回転', loading: '3Dモデルを読み込み中',
+        prev: '前の料理', next: '次の料理', reset: '表示をリセット', menu: 'メニュー',
+        tag_cake: 'ケーキ・シェア向け', tag_tiramisu: 'デザート・カット', tag_gnocchi: 'メイン・ボウル',
+        howTitle: 'テーブルで見る方法', step1: '<b>テーブルに置いてみる</b>をタップします。',
+        step2: 'スマートフォンをテーブルに向け、料理が表示されるまでゆっくり動かします。',
+        step3: '<b>実物大</b>で表示されます。周りを歩いたり、近づいてじっくりご覧ください。',
+        qrAlt: 'このメニューを開くQRコード', qrTitle: 'スマートフォンで開く',
+        qrText: 'ARはスマートフォンまたはタブレットでご利用いただけます。カメラアプリでこのコードを読み取ってください。',
+        keysFoot: '<b>←</b> <b>→</b> で料理を切り替え・<b>R</b> で表示をリセット', dismiss: '閉じる',
+        helpTitle: 'このメニューの使い方', hChoose: '選ぶ', hChooseD: '3D表示の下の料理をタップするか、矢印で切り替えます。料理ごとに共有できるリンクがあります。',
+        hLook: '見る', hLookD: 'ドラッグで回転、ピンチやスクロールで拡大・縮小できます。見失ったらリセットボタンか <kbd>R</kbd> キーを押してください。',
+        hPlace: '置く', hPlaceD: 'スマートフォンで<b>テーブルに置いてみる</b>をタップすると、料理が実物大で表示されます。',
+        hKeys: 'キー操作', hKeysD: '<kbd>←</kbd> <kbd>→</kbd> 料理の切り替え・<kbd>R</kbd> 表示のリセット・<kbd>?</kbd> このヘルプ・<kbd>Esc</kbd> 閉じる',
+        visit: 'Piccolo Coffee・コーヒースタンド・山口県宇部市新天町2-7-20・営業 6:00〜14:00',
+        gotIt: 'わかりました', showing: (n) => `${n}を表示中`, stage: (n) => `${n}の3D表示`,
+        title: (n) => `${n}・Piccolo Coffee ARメニュー`,
+        loadErr: '料理を読み込めませんでした。通信状況をご確認のうえ、もう一度料理をタップしてください。',
+        arErr: 'このスマートフォンではARを起動できませんでした。Androidの場合は「Google Play開発者サービス(AR)」がインストールされているかご確認ください。',
       },
     };
+    const DISHES = {
+      cake: {
+        orbit: '15deg 45deg 0.95m', rotate: true,
+        en: { name: 'Chocolate Ring Cake', course: 'Cake',
+          desc: 'Moist chocolate cake under a glossy chocolate glaze, rolled in chocolate sprinkles, with the glaze pooled on the plate.',
+          alt: 'Chocolate ring cake covered in chocolate sprinkles, glaze pooled on a white plate',
+          facts: [['26 cm', 'across'], ['11 cm', 'tall'], ['32 cm', 'plate']], credit: '3D model made from one photo of the real cake' },
+        ja: { name: 'チョコレートリングケーキ', course: 'ケーキ',
+          desc: 'しっとりしたチョコレートケーキをつややかなチョコレートグレーズで包み、チョコスプレーをまぶしました。お皿にはグレーズがたっぷり。',
+          alt: 'チョコスプレーで覆われたリング型のチョコレートケーキ。白いお皿にグレーズが広がっている',
+          facts: [['26 cm', '直径'], ['11 cm', '高さ'], ['32 cm', 'お皿']], credit: '実物のケーキの写真1枚から作成した3Dモデル' },
+      },
+      tiramisu: {
+        orbit: '-25deg 55deg 0.5m', rotate: true,
+        en: { name: 'Tiramisu', course: 'Dessert',
+          desc: 'Coffee-soaked ladyfingers under a thick layer of mascarpone cream, dusted with cocoa and finished with a sprig of fresh mint.',
+          alt: 'A square slice of tiramisu dusted with cocoa, topped with mint, on a black tray',
+          facts: [['11 × 9 cm', 'slice'], ['4 cm', 'tall'], ['16 cm', 'tray']], credit: '3D model made from photos of the real tiramisu' },
+        ja: { name: 'ティラミス', course: 'デザート',
+          desc: 'コーヒーを染み込ませたフィンガービスケットに濃厚なマスカルポーネクリームを重ね、ココアとフレッシュミントで仕上げました。',
+          alt: 'ココアをまぶし、ミントを添えた四角いティラミス。黒いトレーにのっている',
+          facts: [['11 × 9 cm', 'サイズ'], ['4 cm', '高さ'], ['16 cm', 'トレー']], credit: '実物のティラミスの写真から作成した3Dモデル' },
+      },
+      gnocchi: {
+        // the photo saw this dish from the front: keep the turntable to that side
+        orbit: '0deg 52deg 0.62m', rotate: false, minOrbit: '-80deg 0deg auto', maxOrbit: '80deg 88deg auto',
+        en: { name: 'Pumpkin Gnocchi', course: 'Main',
+          desc: 'Soft pumpkin gnocchi in a creamy cheese sauce, with toasted walnuts, cracked black pepper and a sprig of thyme.',
+          alt: 'Orange pumpkin gnocchi in a pale cheese sauce with walnuts and thyme, in a white bowl with a blue painted pattern',
+          facts: [['23 cm', 'bowl'], ['5 cm', 'tall'], ['1', 'serving']], credit: '3D model textured with an overhead photo of the real dish' },
+        ja: { name: 'かぼちゃのニョッキ', course: 'メイン',
+          desc: 'もちもちのかぼちゃのニョッキを、クリーミーなチーズソースで。ローストしたくるみ、粗挽き黒こしょう、タイムを添えて。',
+          alt: '青い絵柄の白いボウルに盛られた、チーズソースのかぼちゃのニョッキ。くるみとタイムをのせている',
+          facts: [['23 cm', 'ボウル'], ['5 cm', '高さ'], ['1', '人前']], credit: '実物の料理を真上から撮った写真でテクスチャを付けた3Dモデル' },
+      },
+    };
+    let lang = 'ja';
+    try { const saved = localStorage.getItem('lang'); if (saved === 'en' || saved === 'ja') lang = saved; } catch {}
+    const t = (k) => STR[lang][k];
+    const txt = (d) => DISHES[d][lang];
     const ORDER = Object.keys(DISHES);
     const $ = (id) => document.getElementById(id);
     const viewer = $('viewer');
     let current = null;
     let interacted = false;
 
-    function setText(dish) {
+    function setText(d) {
+      const dish = txt(d);
       $('name').textContent = dish.name;
       $('desc').textContent = dish.desc;
       $('course').textContent = dish.course;
@@ -397,13 +486,13 @@
       const apply = () => {
         viewer.setAttribute('src', `models/${d}.glb`);
         viewer.setAttribute('ios-src', `models/${d}.usdz`);
-        viewer.setAttribute('alt', dish.alt);
+        viewer.setAttribute('alt', txt(d).alt);
         viewer.setAttribute('camera-orbit', dish.orbit);
         viewer.setAttribute('min-camera-orbit', dish.minOrbit || 'auto 0deg auto');
         viewer.setAttribute('max-camera-orbit', dish.maxOrbit || 'auto 88deg auto');
         viewer.toggleAttribute('auto-rotate', dish.rotate);
         viewer.jumpCameraToGoal?.();
-        setText(dish);
+        setText(d);
         $('text').classList.remove('out');
       };
       if (first) apply();
@@ -412,15 +501,32 @@
         $('text').classList.add('out');
         setTimeout(apply, 260);
       }
-      $('stage').setAttribute('aria-label', `3D view of the ${dish.name.toLowerCase()}`);
-      document.title = `${dish.name} · Picador Coffee AR Menu`;
+      labels(d);
       $('counter').textContent = `${ORDER.indexOf(d) + 1} / ${ORDER.length}`;
-      $('live').textContent = `Showing ${dish.name}`;
+      $('live').textContent = t('showing')(txt(d).name);
       for (const a of document.querySelectorAll('.dish-card')) a.setAttribute('aria-current', String(a.dataset.dish === d));
       $('toast').classList.remove('show');
     }
     const step = (k) => { location.hash = ORDER[(ORDER.indexOf(current) + k + ORDER.length) % ORDER.length]; };
 
+    function labels(d) {
+      $('stage').setAttribute('aria-label', t('stage')(txt(d).name));
+      document.title = t('title')(txt(d).name);
+    }
+    function applyLang(l) {
+      lang = l;
+      try { localStorage.setItem('lang', l); } catch {}
+      document.documentElement.lang = l;
+      for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n);
+      for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.dataset.i18nHtml);
+      for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
+      for (const el of document.querySelectorAll('[data-i18n-alt]')) el.alt = t(el.dataset.i18nAlt);
+      for (const el of document.querySelectorAll('[data-dish-name]')) el.textContent = txt(el.dataset.dishName).name;
+      for (const b of document.querySelectorAll('.lang button')) b.setAttribute('aria-pressed', String(b.dataset.lang === l));
+      if (current) { setText(current); labels(current); viewer.setAttribute('alt', txt(current).alt); }
+    }
+    for (const b of document.querySelectorAll('.lang button')) b.onclick = () => applyLang(b.dataset.lang);
+    applyLang(lang);
     show(location.hash.slice(1), { first: true });
     addEventListener('hashchange', () => show(location.hash.slice(1)));
     $('prevBtn').onclick = () => step(-1);
@@ -439,9 +545,9 @@
       viewer.classList.remove('swapping');
       document.body.classList.toggle('no-ar', !viewer.canActivateAR);
     });
-    viewer.addEventListener('error', () => toast("This dish didn't load. Check your connection, then tap the dish again."));
+    viewer.addEventListener('error', () => toast(t('loadErr')));
     viewer.addEventListener('ar-status', (e) => {
-      if (e.detail.status === 'failed') toast("Couldn't start AR on this phone. On Android, check that Google Play Services for AR is installed, then try again.");
+      if (e.detail.status === 'failed') toast(t('arErr'));
     });
     viewer.addEventListener('camera-change', (e) => {
       if (e.detail.source === 'user-interaction' && !interacted) { interacted = true; $('hint').classList.add('gone'); }
