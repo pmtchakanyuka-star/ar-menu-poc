@@ -6,8 +6,8 @@ dish appears on your table at its real size. Walk around it and lean in.
 | Dish | Real size |
 | --- | --- |
 | Chocolate ring cake | 26 cm across, 11 cm tall, on a 32 cm plate |
-| Tiramisu | 11 × 9 cm slice, 4 cm tall, on a 16 cm tray |
-| Pumpkin gnocchi | 23 cm bowl, 5.3 cm tall |
+| Tiramisu | a layered slice in a 16 cm tray, 7 cm tall (AI-generated model) |
+| Pumpkin gnocchi | 23 cm bowl, 7 cm tall to the top of the food (AI-generated from photos of the real dish) |
 
 Each dish has its own link: `…/ar-menu-poc/#cake`, `…/ar-menu-poc/#tiramisu`, `…/ar-menu-poc/#gnocchi`.
 
@@ -26,8 +26,10 @@ Each dish has its own link: `…/ar-menu-poc/#cake`, `…/ar-menu-poc/#tiramisu`
 | `tools/calib/detect_edges.py` | Finds the plate rim, the edge of the glaze pool and the cake's top outline in the reference photo. |
 | `tools/calib/fit_camera.py` | Fits a camera and the cake's profile to those edges, plus a few hand-measured points on the hole and base, then scales the result so the base is 26 cm. |
 | `tools/build_cake.py` | Builds the shape and projects the photo onto it as texture. Writes both model files. |
-| `tools/build_tiramisu.py` | Builds the tiramisu, its mint sprig and its tray, textured from the photos. Writes both model files. |
-| `tools/build_gnocchi.py` | Fits a camera to the overhead gnocchi photo, builds the bowl and the food, and textures them with that photo. Writes both model files. |
+| `tools/build_ai_model.py` | Turns an AI-generated 3D model (Higgsfield → Tripo H3.1, downloaded into the git-ignored `tools/ai/`) into a menu model: real size, welded and decimated to 130k triangles, a fresh UV atlas with the full-detail texture baked onto it, matte food. Writes both model files. Used for the gnocchi and the tiramisu. |
+| `media/hero.*` | The looping hero clip (Higgsfield Seedance from a photo of the gnocchi at the café, WebM + MP4, ~0.2 MB) and its poster. It starts only after the first dish has loaded, never with reduced motion or data saver, and has a pause button. |
+| `tools/build_tiramisu.py` | The earlier, photo-built tiramisu (no longer used on the menu). |
+| `tools/build_gnocchi.py` | The earlier gnocchi: fits a camera to the overhead photo and textures a height field with it (no longer used on the menu). |
 | `tools/model_io.py` | The glTF and USDZ writers both builders share. |
 | `tools/preview.html` | Dev-only full-window render of one model (`?src=tiramisu`). |
 | `tools/make_qr.py` | Writes `qr.png` / `qr.svg`. |
@@ -118,3 +120,17 @@ Delete `tools/gnocchi/camera.json` to refit the camera, for example with a new p
 - **Scan dishes instead of photographing them.** A 1–2 minute walk-around scan with Reality Composer or Object Capture (iPhone), Polycam, or Luma sees every side and measures true size. That gives a fully photo-real model with no filled-in back. The same page and QR flow work as they are.
 - **Compress and serve.** Use meshopt or Draco for the GLB, KTX2 textures and a CDN.
 - **One QR per table.** It opens the menu, and each dish opens in AR from there.
+
+### The gnocchi and the tiramisu are AI-generated models
+
+Rebuild them with:
+
+```
+.venv/Scripts/python tools/build_ai_model.py tools/ai/gnocchi.glb gnocchi --width 0.23 --glaze
+.venv/Scripts/python tools/build_ai_model.py tools/ai/tiramisu.glb tiramisu --width 0.16
+```
+
+- **Gnocchi:** Higgsfield's Tripo H3.1 Multiview, from four of the photos of the real dish (front, angled, overhead, low side). Tripo models the gnocchi, walnuts and thyme all the way round, but it doesn't copy where each piece sits on the real plate.
+- **Tiramisu:** an AI reference image (a layered slice in a black ribbed tray), turned into 3D with Tripo H3.1.
+
+The extra Python packages are `trimesh`, `fast-simplification`, `xatlas` and `embreex`.

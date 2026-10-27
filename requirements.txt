@@ -3,3 +3,7 @@ scipy>=1.14
 pillow>=11.0
 usd-core>=26.5
 segno>=1.6
+trimesh>=4.0
+fast-simplification>=0.1
+xatlas>=0.0.9
+embreex>=2.17

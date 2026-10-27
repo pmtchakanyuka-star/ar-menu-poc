@@ -9,3 +9,5 @@ tools/tiramisu/ref/
 tools/tiramisu/tiramisu_basecolor_preview.png
 tools/gnocchi/ref/
 tools/gnocchi/orbit/
+# AI generator downloads (60 MB+), rebuilt into models/ by tools/build_ai_model.py
+tools/ai/
