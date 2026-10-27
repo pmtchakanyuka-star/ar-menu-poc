@@ -145,7 +145,12 @@
       transform: translateX(-120%); animation: sheen 3.6s 1.5s infinite; }
     @keyframes sheen { 30%, 100% { transform: translateX(120%); } }
     .ar-button svg { width: 20px; height: 20px; }
-    .no-ar .ar-button { display: none; }
+    .no-ar model-viewer .ar-button { display: none; }
+    .ar-fallback { display: none; }
+    .no-ar .ar-fallback { display: inline-flex; }
+    .phone-qr { display: grid; justify-items: center; gap: 12px; text-align: center; }
+    .phone-qr img { width: 220px; height: 220px; background: #fff; border-radius: 16px; padding: 10px; }
+    .phone-qr p { margin: 0; color: var(--muted); }
     .hint { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); pointer-events: none;
       display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
       background: rgba(6,26,46,.6); backdrop-filter: blur(8px); border: 1px solid var(--line); transition: opacity .6s; }
@@ -302,6 +307,12 @@
           <span data-i18n="drag">Drag to turn it round</span>
         </div>
 
+        <button class="ar-button ar-fallback" id="arFallback" type="button" aria-haspopup="dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2.8 20 7.4v9.2L12 21.2 4 16.6V7.4z"/><path d="M4 7.4 12 12l8-4.6M12 12v9.2"/>
+          </svg>
+          <span data-i18n="viewAR">View on your table</span>
+        </button>
         <div class="controls">
           <button class="icon-btn" id="prevBtn" type="button" aria-label="Previous dish" data-i18n-aria="prev">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 5-7 7 7 7"/></svg>
@@ -359,6 +370,15 @@
   </div>
   <p class="sr" id="live" aria-live="polite"></p>
 
+  <dialog id="phone" aria-labelledby="phoneTitle">
+    <div class="sheet phone-qr">
+      <h2 id="phoneTitle" data-i18n="phoneTitle">Open it on your phone</h2>
+      <img id="phoneQr" src="models/qr-cake.svg" alt="" width="220" height="220">
+      <p data-i18n="phoneText"></p>
+      <button class="close" type="button" id="phoneClose" data-i18n="gotIt">Got it</button>
+    </div>
+  </dialog>
+
   <dialog id="help" aria-labelledby="helpTitle">
     <div class="sheet">
       <h2 id="helpTitle" data-i18n="helpTitle">How this menu works</h2>
@@ -391,6 +411,7 @@
         hPlace: 'Place', hPlaceD: 'Tap <b>View on your table</b> on a phone. The dish appears at exactly its real size.',
         hKeys: 'Keys', hKeysD: '<kbd>←</kbd> <kbd>→</kbd> switch dishes · <kbd>R</kbd> reset view · <kbd>?</kbd> this help · <kbd>Esc</kbd> close',
         visit: 'Piccolo Coffee · coffee stand · 2-7-20 Shintencho, Ube, Yamaguchi · Open 6:00–14:00',
+        phoneTitle: 'Open it on your phone', phoneText: 'Augmented reality runs on a phone or tablet. Scan this code with your camera: it opens this dish, ready to place on your table.',
         gotIt: 'Got it', showing: (n) => `Showing ${n}`, stage: (n) => `3D view of the ${n.toLowerCase()}`,
         title: (n) => `${n} · Piccolo Coffee AR Menu`,
         loadErr: "This dish didn't load. Check your connection, then tap the dish again.",
@@ -413,6 +434,7 @@
         hPlace: '置く', hPlaceD: 'スマートフォンで<b>テーブルに置いてみる</b>をタップすると、料理が実物大で表示されます。',
         hKeys: 'キー操作', hKeysD: '<kbd>←</kbd> <kbd>→</kbd> 料理の切り替え・<kbd>R</kbd> 表示のリセット・<kbd>?</kbd> このヘルプ・<kbd>Esc</kbd> 閉じる',
         visit: 'Piccolo Coffee・コーヒースタンド・山口県宇部市新天町2-7-20・営業 6:00〜14:00',
+        phoneTitle: 'スマートフォンで開く', phoneText: 'ARはスマートフォンまたはタブレットで動作します。カメラでこのコードを読み取ると、この料理がすぐにテーブルに置ける状態で開きます。',
         gotIt: 'わかりました', showing: (n) => `${n}を表示中`, stage: (n) => `${n}の3D表示`,
         title: (n) => `${n}・Piccolo Coffee ARメニュー`,
         loadErr: '料理を読み込めませんでした。通信状況をご確認のうえ、もう一度料理をタップしてください。',
@@ -560,6 +582,8 @@
     // help and shortcuts
     const help = $('help');
     $('helpBtn').onclick = () => help.showModal();
+    $('arFallback').onclick = () => { $('phoneQr').src = `models/qr-${current}.svg`; $('phoneQr').alt = t('qrAlt'); $('phone').showModal(); };
+    $('phoneClose').onclick = () => $('phone').close();
     $('helpClose').onclick = () => help.close();
     addEventListener('keydown', (e) => {
       if (e.target.closest('input, textarea') || e.metaKey || e.ctrlKey) return;
