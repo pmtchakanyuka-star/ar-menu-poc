@@ -7,8 +7,9 @@ dish appears on your table at its real size. Walk around it and lean in.
 | --- | --- |
 | Chocolate ring cake | 26 cm across, 11 cm tall, on a 32 cm plate |
 | Tiramisu | 11 × 9 cm slice, 4 cm tall, on a 16 cm tray |
+| Pumpkin gnocchi | 23 cm bowl, 5.3 cm tall |
 
-Each dish has its own link: `…/ar-menu-poc/#cake`, `…/ar-menu-poc/#tiramisu`.
+Each dish has its own link: `…/ar-menu-poc/#cake`, `…/ar-menu-poc/#tiramisu`, `…/ar-menu-poc/#gnocchi`.
 
 **Live:** https://pmtchakanyuka-star.github.io/ar-menu-poc/
 
@@ -26,6 +27,7 @@ Each dish has its own link: `…/ar-menu-poc/#cake`, `…/ar-menu-poc/#tiramisu`
 | `tools/calib/fit_camera.py` | Fits a camera and the cake's profile to those edges, plus a few hand-measured points on the hole and base, then scales the result so the base is 26 cm. |
 | `tools/build_cake.py` | Builds the shape and projects the photo onto it as texture. Writes both model files. |
 | `tools/build_tiramisu.py` | Builds the tiramisu, its mint sprig and its tray, textured from the photos. Writes both model files. |
+| `tools/build_gnocchi.py` | Fits a camera to the overhead gnocchi photo, builds the bowl and the food, and textures them with that photo. Writes both model files. |
 | `tools/model_io.py` | The glTF and USDZ writers both builders share. |
 | `tools/preview.html` | Dev-only full-window render of one model (`?src=tiramisu`). |
 | `tools/make_qr.py` | Writes `qr.png` / `qr.svg`. |
@@ -59,6 +61,22 @@ Both files are validated. The Khronos glTF Validator reports 0 errors and 0 warn
 
 Both files pass the same checks as the cake's: 0 glTF Validator errors or warnings, and all 28 OpenUSD validators.
 
+### The gnocchi is textured with one overhead photo at full resolution
+
+1. **Camera.** The bowl's white rim is found against the table in the overhead photo (680 edge points) and a pinhole camera is fitted to it, with the focal length from the photo's EXIF (24 mm on the EOS M50 II's APS-C sensor). The rim lands within 5 px. The pose is saved in `tools/gnocchi/camera.json`.
+2. **Shape.** The bowl is a surface of revolution, with the profile measured from the side-on photo. There is no ruler in the photos, so it is taken as a standard 23 cm pasta bowl. The food is a height field over the bowl's floor. Solid food is told apart from the bowl by colour and from thin sauce by shape, then piled to the height the side photos show: the gnocchi top out level with the rim. The dark creases between gnocchi in the photo sink in, so each one reads as a soft pillow, and walnuts sit a little proud.
+3. **Texture.** The inside of the bowl and all the food take their colour straight from the overhead photo through the fitted camera. The UVs are the projected photo pixels, so nothing is resampled more than once: a 4096 px crop, about 0.06 mm per texel. The bump and roughness maps come from the same pixels: a glossy glaze, a matte dish, since the photo's own highlights are kept.
+4. **Export.** Like the others: metres, Y-up, origin under the bowl. The dish is turned so its front faces where the photo was taken from.
+
+One photo can't see everything: the sides of gnocchi facing away from the overhead camera are stretched a little. Projecting the side photos onto those faces is the next step.
+
+| | |
+| --- | --- |
+| Bowl | 23 cm across, 5.3 cm tall |
+| Triangles | ~127k |
+| Textures | colour 4096×4096, bump 2048×2048, roughness 1024×1024 (JPEG) |
+| Files | `gnocchi.glb` 5.6 MB · `gnocchi.usdz` 4.1 MB |
+
 ## Rebuild
 
 The reference photo isn't in the repo, because it shows more than the cake. Put it at
@@ -85,6 +103,15 @@ The tiramisu photos aren't in the repo either (people in the background). Put th
 ```
 
 The photo crops it uses (the corners of each face, the top's crop) are listed at the top of the script.
+
+For the gnocchi, put the overhead photo at `tools/gnocchi/ref/overhead.jpg` (`side.jpg` was used
+only to measure the bowl's profile). Then:
+
+```bash
+.venv/Scripts/python tools/build_gnocchi.py
+```
+
+Delete `tools/gnocchi/camera.json` to refit the camera, for example with a new photo.
 
 ## From PoC to a real AR menu
 

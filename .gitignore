@@ -7,3 +7,5 @@ tools/calib/cake_basecolor_preview.png
 # Same for the tiramisu photos (people in the background).
 tools/tiramisu/ref/
 tools/tiramisu/tiramisu_basecolor_preview.png
+tools/gnocchi/ref/
+tools/gnocchi/orbit/
